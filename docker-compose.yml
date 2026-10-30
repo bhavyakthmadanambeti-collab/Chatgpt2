@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # ChatGPT Pro Web & Backend Server
+  chatgpt-pro:
+    build: .
+    container_name: chatgpt_pro_app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - JWT_SECRET=${JWT_SECRET:-chatgpt_pro_jwt_secret_production}
+      - OLLAMA_URL=http://ollama:11434
+      - SEARXNG_URL=http://searxng:8080
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    volumes:
+      - chatgpt_data:/app/data
+      - chatgpt_uploads:/app/uploads
+    depends_on:
+      - ollama
+      - searxng
+    restart: unless-stopped
+
+  # Local Offline AI Engine (Ollama)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: chatgpt_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+    # If running with NVIDIA GPU, uncomment:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  # Self-Hosted Private Search Engine (SearXNG)
+  searxng:
+    image: searxng/searxng:latest
+    container_name: chatgpt_searxng
+    ports:
+      - "8080:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+    restart: unless-stopped
+
+volumes:
+  chatgpt_data:
+  chatgpt_uploads:
+  ollama_models:

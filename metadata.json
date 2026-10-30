@@ -1,0 +1,12 @@
+{
+  "name": "ChatGPT Pro",
+  "description": "Production-grade ChatGPT-style AI assistant with multi-model intelligence, live web search, document RAG, image and video analysis, voice assistant, and owner dashboard.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
+
